@@ -123,6 +123,16 @@ a = y if x > 5 else z
 # значение_если_истина if условие else значение_если_ложь
 
 
+x = 0
+y = 10
+z = 99
+w = -1
+
+a = (w) if (x + y < 0) else (y if x > 5 else z)
+
+print(a)
+
+
 # while условие:
 #     оператор1
 # else:

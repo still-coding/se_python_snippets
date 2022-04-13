@@ -2,11 +2,12 @@ input = '1, 2, 34,5 ,  6'
 
 
 def parse_conventional(input):
-    result = []
-    strs = input.split(',')
-    for s in strs:
-        result.append(int(s.strip()))
-    return result
+    # result = []
+    # strs = input.split(',')
+    # for s in strs:
+    #     result.append(int(s.strip()))
+    # return result
+    return [int(s.strip()) for s in input.split(',')]
 
 
 def parse_map(input):
@@ -38,16 +39,23 @@ def curry(f):
 
 @curry
 def parse_curry(*args):
-    result = []
-    for a in args:
-        result.append(int(a.strip(', ')))
-    return result
+    # result = []
+    # for a in args:
+    #     result.append(int(a.strip(', ')))
+    # return result
+    return [int(a.strip(', ')) for a in args]
 
 
+print('Conventional:')
 print(parse_conventional(input))
+
+print('\nMap:')
 print(parse_map(input))
+
+print('\nRecursion:')
 print(parse_recursive(input))
 
+print('\nCurrying:')
 print(parse_curry('1, ')('  2 , ')('  34,   ')())
 
 parse_curry('1, ')
