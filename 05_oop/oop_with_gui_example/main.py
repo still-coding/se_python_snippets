@@ -17,7 +17,6 @@ def build(app):
     def button_new_game_press(widget):
         nonlocal game
         game = Game()
-        button_start.label = 'Start'
         mt_input_info.clear()
         selection_hero.items = game.get_heroes_list()
         update_hero()
@@ -35,7 +34,8 @@ def build(app):
         i = 0
         while game.game_continues():
             mt_input_info.value += game.hero_move() if i % 2 else game.monster_move()
-            update_monster() if i % 2 else update_hero()
+            update_monster()
+            update_hero()
             await sleep(1)
             i += 1
         button_start.label = 'Start'
