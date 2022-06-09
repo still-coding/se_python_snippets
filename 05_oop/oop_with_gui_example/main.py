@@ -17,6 +17,7 @@ def build(app):
     def button_new_game_press(widget):
         nonlocal game
         game = Game()
+        button_start.label = 'Start'
         mt_input_info.clear()
         selection_hero.items = game.get_heroes_list()
         update_hero()
@@ -49,11 +50,11 @@ def build(app):
         if in_progress:
             task.cancel()
             in_progress = False
-            widget.label = 'Stop'
+            widget.label = 'Start'
         else:
             task = create_task(play())
             in_progress = True
-            widget.label = 'Start'
+            widget.label = 'Stop'
 
 
     style_flex = Pack(flex=1, padding=10)
