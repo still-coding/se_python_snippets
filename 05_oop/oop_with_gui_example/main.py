@@ -17,6 +17,7 @@ def build(app):
     def button_new_game_press(widget):
         nonlocal game
         game = Game()
+        mt_input_info.clear()
         selection_hero.items = game.get_heroes_list()
         update_hero()
         update_monster()
