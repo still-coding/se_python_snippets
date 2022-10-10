@@ -47,7 +47,7 @@ def wrong_fun():
 
 if __name__ == '__main__':
 
-    # print('I used to be an adventutrer like you...')
+    # print('I used to be an adventurer like you...')
     # raise MyException
 
     assert False, "Nobody expects the Spanish Inquisition!" 
