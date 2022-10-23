@@ -28,3 +28,6 @@ def fib_test():
     assert fib(2) == 1
     assert fib(10) == 55
     assert fib(30) == 832040, "Test fib(30) failed: expected 832040"
+
+
+# https://stackoverflow.com/questions/739654/how-do-i-make-function-decorators-and-chain-them-together
