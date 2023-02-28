@@ -33,6 +33,8 @@
 #     5. Если исключений не возникает - метод exit всё равно вызывается после выполнения блока __exit__(None, None, None)
 
 
+# Контекстный менеджер через класс
+
 class MyContextManager:
     def __init__(self, file_name, mode):
         self.file_name = file_name
@@ -51,3 +53,46 @@ class MyContextManager:
 with MyContextManager('exceptions_hierarchy.txt', 'r') as f:
     for line in f:
         print(line, end='')
+
+
+
+
+
+from datetime import datetime
+import time
+ 
+ 
+class Timer:
+    def __init__(self): 
+            pass
+ 
+    def __enter__(self):
+            self.start = datetime.utcnow()
+            return None
+    
+    def __exit__(self, type, value, traceback):
+            print(f"Time passed: {(datetime.utcnow() - self.start).total_seconds()}")
+ 
+ 
+with Timer():
+    time.sleep(2) 
+
+
+
+# контекстный менеджер через генераторную функцию
+
+from contextlib import contextmanager
+ 
+ 
+@contextmanager
+def timer():
+
+    start = datetime.utcnow()
+    # перед yeild - код, который предназначем для __enter__
+    yield # если вам нужно что-то вернуть - указываем тут
+    # после yeild - для __exit__
+    print(f"Time passed: {(datetime.utcnow() - start).total_seconds()}")
+ 
+ 
+with timer():
+    time.sleep(2)
