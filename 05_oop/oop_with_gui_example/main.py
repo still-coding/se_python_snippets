@@ -1,100 +1,131 @@
-import toga
-from toga.style.pack import Pack, COLUMN, ROW, CENTER
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import flet as ft
 from game import Game
-from asyncio import sleep, create_task
+from time import sleep
 
 
-def build(app):
+def main(page: ft.Page):
+    page.title = "Heroes and Monsters"
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.theme_mode = ft.ThemeMode.DARK
+    page.window_width = 1000
 
     game = None
+    
+    lv_info = ft.ListView(expand=True, spacing=0, height=300, auto_scroll=True)
+    pb_hero = ft.ProgressBar(width=400, color=ft.colors.RED, value=0)
+    pb_monster = ft.ProgressBar(width=400, color=ft.colors.RED, value=0)
+    txt_hero = ft.Text("hero", text_align=ft.TextAlign.CENTER, width=400)
+    txt_monster = ft.Text("monster", text_align=ft.TextAlign.CENTER, width=400)
 
-    def update_monster():
-        pb_monster.value, label_monster.text  = game.get_monster_status()
+    def dd_heroes_select(e):
+        game.select_hero_by_class_name(dd_heroes.value)
+        pb_hero.value, txt_hero.value = game.get_hero_status()
+        page.update()
 
-    def update_hero():
-        pb_hero.value, label_hero.text  = game.get_hero_status()
 
-    def button_new_game_press(widget):
+    def btn_new_game_click(e):
         nonlocal game
         game = Game()
-        mt_input_info.clear()
-        selection_hero.items = game.get_heroes_list()
-        update_hero()
-        update_monster()
+        lv_info.controls.clear()
+        dd_heroes.options.clear()
+        dd_heroes.options = list(map(ft.dropdown.Option, game.get_heroes_list()))
+        dd_heroes.value = dd_heroes.options[0].key
+        pb_hero.value, txt_hero.value = game.get_hero_status()
+        pb_monster.value, txt_monster.value = game.get_monster_status()
+        page.update()
 
-    def button_monster_press(widget):
+
+    def btn_create_monster_click(e):
         game.create_monster()
-        update_monster()
+        pb_monster.value, txt_monster.value = game.get_monster_status()
+        page.update()
 
-    def selection_hero_select(widget):
-        game.select_hero_by_class_name(widget.value)
-        update_hero()
-
-    async def play():
-        i = 0
-        while game.game_continues():
-            mt_input_info.value += game.hero_move() if i % 2 else game.monster_move()
-            update_monster()
-            update_hero()
-            await sleep(1)
-            i += 1
-        button_start.label = 'Start'
-        nonlocal in_progress
-        in_progress = False
-
-    task = None
     in_progress = False
 
-    def button_start_press(widget):
-        nonlocal task, in_progress
+    def btn_start_click(e):
+        nonlocal in_progress
         if in_progress:
-            task.cancel()
             in_progress = False
-            widget.label = 'Start'
-        else:
-            task = create_task(play())
-            in_progress = True
-            widget.label = 'Stop'
+            btn_start.text = "Start"
+            page.update()
+            return
+        i = 0
+        in_progress = True
+        btn_start.text = "Stop"
+        while in_progress and game.game_continues():
+            lv_info.controls.append(
+                ft.Text(
+                    game.hero_move() if i % 2 else game.monster_move(),
+                    text_align=ft.TextAlign.CENTER,
+                    width=400,
+                )
+            )
+            pb_hero.value, txt_hero.value = game.get_hero_status()
+            pb_monster.value, txt_monster.value = game.get_monster_status()
+            page.update()
+            sleep(1)
+            i += 1
+
+    btn_start = ft.ElevatedButton(text="Start", width=450, on_click=btn_start_click)
+    dd_heroes = ft.Dropdown(on_change=dd_heroes_select)
+
+    page.add(
+        ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.ElevatedButton(
+                            text="New Game", width=450, on_click=btn_new_game_click
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Row(
+                    [
+                        ft.Column(
+                            [
+                                ft.Row(
+                                    [ft.Text("Select hero"), dd_heroes],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                ),
+                                pb_hero,
+                                txt_hero,
+                            ],
+                            spacing=50,
+                        ),
+                        ft.Column(
+                            [
+                                ft.Row(
+                                    [
+                                        ft.ElevatedButton(
+                                            text="Create Monster",
+                                            on_click=btn_create_monster_click,
+                                        )
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    width=400,
+                                    height=64,
+                                ),
+                                pb_monster,
+                                txt_monster,
+                            ],
+                            spacing=50,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Row(
+                    [btn_start],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Row([lv_info], alignment=ft.MainAxisAlignment.CENTER),
+            ],
+            spacing=50,
+        )
+    )
 
 
-    style_flex = Pack(flex=1, padding=10)
-    style_row = Pack(direction=ROW, flex=1, padding=10)
-    style_col = Pack(direction=COLUMN, flex=1, padding=10)
-    style_pb = Pack(direction=COLUMN, width=250, height=20, padding=10)
-    style_more_pad = Pack(text_align=CENTER, flex=1, padding=20)
-
-    button_new_game = toga.Button('New Game', style=style_more_pad, on_press=button_new_game_press)
-
-    label_select = toga.Label('Select hero:', style=style_flex)
-    selection_hero = toga.Selection(style=style_flex, on_select=selection_hero_select)
-
-    pb_hero = toga.ProgressBar(max=100, running=False, value=0, style=style_col)
-    label_hero = toga.Label('hero', style=style_more_pad)
-
-    button_monster = toga.Button('Create Monster', style=style_flex, on_press=button_monster_press)
-    pb_monster = toga.ProgressBar(max=100, running=False, value=0, style=style_col)
-    label_monster = toga.Label('monster', style=style_more_pad)
-
-    button_start = toga.Button("Start", style=style_more_pad, on_press=button_start_press)
-    mt_input_info = toga.MultilineTextInput("", style=style_more_pad, readonly=True)
-
-
-    box_hero_row1 = toga.Box(style=style_row, children=[label_select, selection_hero])
-    box_hero_row2 = toga.Box(style=style_row, children=[pb_hero])
-    box_hero = toga.Box(style=style_col, children=[box_hero_row1, box_hero_row2, label_hero])
-
-    box_monster_row1 = toga.Box(style=style_row, children=[button_monster])
-    box_monster_row2 = toga.Box(style=style_row, children=[pb_monster])
-    box_monster = toga.Box(style=style_col, children=[box_monster_row1, box_monster_row2, label_monster])
-
-    box_hero_and_monster = toga.Box(style=style_row, children=[box_hero, box_monster])
-
-    return toga.Box(children=[button_new_game, box_hero_and_monster, button_start, mt_input_info], style=style_col)
-
-
-def main():
-    return toga.App('Heroes and Monsters', 'org.surgu.asoiu.heroesandmonsters', startup=build)
-
-
-if __name__ == '__main__':
-    main().main_loop()
+ft.app(target=main)

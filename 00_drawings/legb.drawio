@@ -1,0 +1,58 @@
+<mxfile host="65bd71144e">
+    <diagram id="f3d42d45-5374-dc05-74ab-4f55b61450d6" name="Page-1">
+        <mxGraphModel dx="681" dy="657" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="40" width="920" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Встроенная область видимости (python)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="50" width="680" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="builtins" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontFamily=Courier New;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="100" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="140" width="880" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Глобальная область видимости (модуль)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="150" width="680" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="200" width="840" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Локальные области видимости объемлющих ф-й" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="110" y="210" width="770" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="280" width="790" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;Локальная область видимости (функция)&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="290" width="770" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="def / lambda" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;fontFamily=Courier New;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="270" width="320" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="L" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="370" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="E" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="230" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="G" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="890" y="160" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="B" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Courier New;fontSize=32;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="70" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="endArrow=classic;html=1;strokeWidth=2;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="170" y="370" as="sourcePoint"/>
+                        <mxPoint x="80" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

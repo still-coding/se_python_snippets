@@ -1,7 +1,0 @@
-gbulb==0.6.3
-pycairo==1.22.0
-PyGObject==3.42.2
-toga==0.3.0.dev39
-toga-core==0.3.0.dev39
-toga-gtk==0.3.0.dev39
-travertino==0.1.3

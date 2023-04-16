@@ -16,7 +16,11 @@ class B:
 class C(A, B):
     pass
 
-class D(C, B):
+class D(C, B): # аналогично class D(C):
     pass
+
+
+# class D(B, C): # не линеаризуется
+#     pass
 
 d = D()
