@@ -1,4 +1,5 @@
 # см. 00_drawings/mro.drawio
+# https://habr.com/ru/articles/62203/
 
 class T(type):
     def __repr__(cls):
