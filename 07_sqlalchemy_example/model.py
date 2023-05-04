@@ -24,6 +24,7 @@ class Product(Base):
     name = mapped_column(String, nullable=False)
     price = mapped_column(Numeric(8, 2), nullable=False)
     details = relationship('OrderDetails', back_populates='product')
+
     def __repr__(self):
         return f'Product(id={self.id}, name={self.name})'
 
@@ -36,6 +37,7 @@ class Order(Base):
     time = mapped_column(DateTime, nullable=False)
     customer = relationship('Customer', back_populates='orders')
     details = relationship('OrderDetails', back_populates='order')
+    
     def __repr__(self):
         return f'<Order: id={self.id}, number={self.number}>'
 

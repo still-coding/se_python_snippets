@@ -26,9 +26,9 @@ if __name__ == '__main__':
     execute_query(sess, all_details, print_results=True)
 
     orders_total = select(Order, func.sum(Product.price * OrderDetails.quantity)) \
-    .join(OrderDetails, Order.id == OrderDetails.order_id) \
-    .join(Product, OrderDetails.product_id == Product.id) \
-    .group_by(Order.id).order_by(Order.id)
+        .join(OrderDetails, Order.id == OrderDetails.order_id) \
+        .join(Product, OrderDetails.product_id == Product.id) \
+        .group_by(Order.id).order_by(Order.id)
     results = execute_query(sess, orders_total, print_results=True)
 
     print('First order total queried:', results[0][1])
