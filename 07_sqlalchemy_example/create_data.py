@@ -1,7 +1,7 @@
 from datetime import datetime
 from random import choice, randint, sample
 
-from tools import create_database, get_session_engine
+from tools import create_database
 from sqlalchemy import select
 
 from config import DATABASE_URI
@@ -15,10 +15,8 @@ def read_csv(filename):
 
 
 def fill_db(sess):
-
     customers = read_csv("customers")
-    products = read_csv("products")
-
+    products_data = read_csv("products")
     tag_names = read_csv('tags')
 
     with sess() as session, session.begin():
@@ -26,13 +24,18 @@ def fill_db(sess):
             cust = Customer(name=c[0], address=c[1])
             session.add(cust)
 
-        for p in products:
+        actual_products = []
+        for p in products_data:
             prod = Product(name=p[0], price=p[1])
-            for _ in range(randint(1, 5)):
-                t = Tag(name=choice(tag_names)[0])
-                prod.tags.append(t)
+            actual_products.append(prod)
             session.add(prod)
-            session.add(t)
+
+        for tn in tag_names:
+            tag = Tag(name=tn[0])
+            current_tag_products = sample(actual_products, randint(1, 10))
+            for p in current_tag_products:
+                tag.products.append(p)
+            session.add(tag)
 
 
 
@@ -57,9 +60,6 @@ def fill_db(sess):
                 )
                 session.add(det)
 
-            
-
-
 
 
 if __name__ == "__main__":
@@ -72,7 +72,4 @@ if __name__ == "__main__":
 
     print("db filled with data")
 
-
     session().close()
-
-    print("session closed")

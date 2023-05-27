@@ -41,3 +41,7 @@ if __name__ == '__main__':
     for details in first_order.details:
         check_total += details.product.price * details.quantity 
     print('First order total checked:', check_total)
+
+    products = execute_query(sess, select(Product))
+    for p in products:
+        print(p[0].name, p[0].tags)
