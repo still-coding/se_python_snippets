@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Identity
+from sqlalchemy import ForeignKey, Identity, Table, Column
 from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
 from sqlalchemy.types import DateTime, Integer, Numeric, String
 
@@ -17,6 +17,12 @@ class Customer(Base):
     def __repr__(self):
         return f'Customer(id={self.id}, name={self.name})'
 
+products_tags = Table(
+    "products_tags",
+    Base.metadata,
+    Column("product_id", ForeignKey("product.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tag.id"), primary_key=True)
+)
 
 class Product(Base):
     __tablename__ = 'product'
@@ -24,9 +30,18 @@ class Product(Base):
     name = mapped_column(String, nullable=False)
     price = mapped_column(Numeric(8, 2), nullable=False)
     details = relationship('OrderDetails', back_populates='product')
-
+    tags = relationship('Tag', back_populates='products', secondary=products_tags)
     def __repr__(self):
         return f'Product(id={self.id}, name={self.name})'
+
+
+class Tag(Base):
+    __tablename__ = 'tag'
+    id = mapped_column(Integer, Identity(), primary_key=True)
+    name = mapped_column(String, nullable=False)
+    products = relationship('Product', back_populates='tags', secondary=products_tags)
+    def __repr__(self):
+        return f'Tag(id={self.id}, name={self.name})'
 
 
 class Order(Base):

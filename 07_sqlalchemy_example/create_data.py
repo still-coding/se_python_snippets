@@ -1,22 +1,25 @@
 from datetime import datetime
 from random import choice, randint, sample
 
-from tools import create_database
+from tools import create_database, get_session_engine
 from sqlalchemy import select
 
 from config import DATABASE_URI
-from model import Customer, Order, OrderDetails, Product
+from model import Customer, Order, OrderDetails, Product, Tag
 
-
-
-def fill_db(sess):
-    def read_csv(filename):
+def read_csv(filename):
         with open(f"./static_data/{filename}.csv", "r") as f:
             result = [line.strip() for line in f]
         return [r.split(";") for r in result]
 
+
+
+def fill_db(sess):
+
     customers = read_csv("customers")
     products = read_csv("products")
+
+    tag_names = read_csv('tags')
 
     with sess() as session, session.begin():
         for c in customers:
@@ -25,7 +28,13 @@ def fill_db(sess):
 
         for p in products:
             prod = Product(name=p[0], price=p[1])
+            for _ in range(randint(1, 5)):
+                t = Tag(name=choice(tag_names)[0])
+                prod.tags.append(t)
             session.add(prod)
+            session.add(t)
+
+
 
     with sess() as session, session.begin():
         cust_ids = [c.id for c in session.scalars(select(Customer)).all()]
@@ -48,6 +57,10 @@ def fill_db(sess):
                 )
                 session.add(det)
 
+            
+
+
+
 
 if __name__ == "__main__":
     print("connecting...")
@@ -56,8 +69,10 @@ if __name__ == "__main__":
     print("db created!")
 
     fill_db(session)
+
     print("db filled with data")
-    
+
+
     session().close()
 
     print("session closed")
