@@ -15,4 +15,4 @@ Based on:
 4. Modules and packages
 5. OOP
 6. Exceptions
-7. ORM (SQLAlchemy and Piccolo)
+7. ORM (SQLAlchemy)

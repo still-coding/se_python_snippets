@@ -1,15 +1,16 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from model import Base
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
-def get_session_engine(db_uri):
-    engine = create_engine(db_uri)  # , echo=True)
-    session = sessionmaker(engine)
-    return session, engine
+from models import Base
 
 
-def create_database(db_uri):
-    session, engine = get_session_engine(db_uri)
+def get_session_engine(db_uri: str) -> tuple[sessionmaker[Session], Engine]:
+    engine = create_engine(db_uri)  # echo=True prints all SQL
+    return sessionmaker(engine), engine
+
+
+def create_database(db_uri: str) -> sessionmaker[Session]:
+    session_factory, engine = get_session_engine(db_uri)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
-    return session
+    return session_factory

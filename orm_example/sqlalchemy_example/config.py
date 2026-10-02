@@ -1,12 +1,12 @@
 import os
 
-# PostgreSQL (docker compose up -d in the parent folder)
+_user = os.getenv("POSTGRES_USER", "shop")
+_password = os.getenv("POSTGRES_PASSWORD", "shop")
+_port = os.getenv("POSTGRES_PORT", "5433")
+
+# PostgreSQL (`docker compose up -d --wait` in the parent folder)
 # "postgresql+psycopg://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>"
-POSTGRES_URI = "postgresql+psycopg://{user}:{password}@localhost:{port}/shop_sqlalchemy".format(
-    user=os.getenv("POSTGRES_USER", "shop"),
-    password=os.getenv("POSTGRES_PASSWORD", "shop"),
-    port=os.getenv("POSTGRES_PORT", "5433"),
-)
+POSTGRES_URI = f"postgresql+psycopg://{_user}:{_password}@localhost:{_port}/shop_sqlalchemy"
 
 # SQLite
 # "sqlite:///<DATABASE_PATH>" or "sqlite:///:memory:"

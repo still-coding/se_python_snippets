@@ -1,77 +1,60 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from random import choice, randint, sample
 
-from tools import create_database
 from sqlalchemy import select
+from sqlalchemy.orm import Session, sessionmaker
 
 from config import DATABASE_URI
-from model import Customer, Order, OrderDetails, Product, Tag
+from models import Customer, Order, OrderDetails, Product, Tag
+from tools import create_database
 
-def read_csv(filename):
-    path = Path(__file__).parent.parent / "static_data" / f"{filename}.csv"
-    with open(path, encoding="utf-8") as f:
-        result = [line.strip() for line in f if line.strip()]
-    return [r.split(";") for r in result]
+STATIC_DATA = Path(__file__).parent.parent / "static_data"
 
 
-
-def fill_db(sess):
-    customers = read_csv("customers")
-    products_data = read_csv("products")
-    tag_names = read_csv('tags')
-
-    with sess() as session, session.begin():
-        for c in customers:
-            cust = Customer(name=c[0], address=c[1])
-            session.add(cust)
-
-        actual_products = []
-        for p in products_data:
-            prod = Product(name=p[0], price=p[1])
-            actual_products.append(prod)
-            session.add(prod)
-
-        for tn in tag_names:
-            tag = Tag(name=tn[0])
-            current_tag_products = sample(actual_products, randint(1, 10))
-            for p in current_tag_products:
-                tag.products.append(p)
-            session.add(tag)
+def read_csv(filename: str) -> list[list[str]]:
+    with open(STATIC_DATA / f"{filename}.csv", encoding="utf-8") as f:
+        return [line.strip().split(";") for line in f if line.strip()]
 
 
+def fill_db(session_factory: sessionmaker[Session]) -> None:
+    # `sessionmaker.begin()` opens a session and a transaction: commit on exit, rollback on error
+    with session_factory.begin() as session:
+        session.add_all(
+            Customer(name=name, address=address) for name, address in read_csv("customers")
+        )
+        products = [Product(name=name, price=price) for name, price in read_csv("products")]
+        session.add_all(products)
+        session.add_all(
+            Tag(name=name, products=sample(products, randint(1, 10)))
+            for (name,) in read_csv("tags")
+        )
 
-    with sess() as session, session.begin():
-        cust_ids = [c.id for c in session.scalars(select(Customer)).all()]
-        for i in range(100):
-            order = Order(
-                customer_id=choice(cust_ids),
+    with session_factory.begin() as session:
+        customer_ids = session.scalars(select(Customer.id)).all()
+        session.add_all(
+            Order(
+                customer_id=choice(customer_ids),
                 number=str(i),
-                time=datetime.fromtimestamp(1681655478 - randint(0, 10000000)),
+                time=datetime.fromtimestamp(1681655478 - randint(0, 10000000), tz=UTC),
             )
-            session.add(order)
+            for i in range(100)
+        )
 
-    with sess() as session, session.begin():
-        order_ids = [o.id for o in session.scalars(select(Order)).all()]
-        product_ids = [p.id for p in session.scalars(select(Product)).all()]
-        for oid in order_ids:
-            order_pids = sample(product_ids, randint(1, 20))
-            for pid in order_pids:
-                det = OrderDetails(
-                    order_id=oid, product_id=pid, quantity=randint(1, 10)
-                )
-                session.add(det)
-
+    with session_factory.begin() as session:
+        order_ids = session.scalars(select(Order.id)).all()
+        product_ids = session.scalars(select(Product.id)).all()
+        for order_id in order_ids:
+            session.add_all(
+                OrderDetails(order_id=order_id, product_id=product_id, quantity=randint(1, 10))
+                for product_id in sample(product_ids, randint(1, 20))
+            )
 
 
 if __name__ == "__main__":
     print("connecting...")
-    session = create_database(DATABASE_URI)
-    print("connection established")
+    session_factory = create_database(DATABASE_URI)
     print("db created!")
 
-    fill_db(session)
-
+    fill_db(session_factory)
     print("db filled with data")
-
-    session().close()

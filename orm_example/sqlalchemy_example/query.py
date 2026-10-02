@@ -1,47 +1,57 @@
-from config import DATABASE_URI
-from model import Customer, Order, OrderDetails, Product
-from tools import get_session_engine
-from sqlalchemy import select, func
+from collections.abc import Sequence
+from typing import Any
 
-def execute_query(session, query, print_results=False):
-    results = session().execute(query).all()
+from sqlalchemy import Row, func, select
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import Select
+
+from config import DATABASE_URI
+from models import Customer, Order, OrderDetails, Product
+from tools import get_session_engine
+
+
+def execute_query(
+    session: Session, query: Select[*tuple[Any, ...]], print_results: bool = False
+) -> Sequence[Row[*tuple[Any, ...]]]:
+    results = session.execute(query).all()
     if print_results:
         for result in results:
             print(result)
-        print('\n')
+        print("\n")
     return results
 
 
-if __name__ == '__main__':
-    sess, _ = get_session_engine(DATABASE_URI)
-    all_customers = select(Customer)
-    execute_query(sess, all_customers, print_results=True)
-    
-    orders = select(Order, Customer).join(Order.customer)
-    execute_query(sess, orders, print_results=True)
+if __name__ == "__main__":
+    session_factory, _ = get_session_engine(DATABASE_URI)
+    with session_factory() as session:
+        execute_query(session, select(Customer), print_results=True)
 
-    all_details = select(Order, Product, OrderDetails.quantity) \
-        .join(OrderDetails, Order.id == OrderDetails.order_id) \
-        .join(Product, OrderDetails.product_id == Product.id)
-    execute_query(sess, all_details, print_results=True)
+        orders = select(Order, Customer).join(Order.customer)
+        execute_query(session, orders, print_results=True)
 
-    orders_total = select(Order, func.sum(Product.price * OrderDetails.quantity)) \
-        .join(OrderDetails, Order.id == OrderDetails.order_id) \
-        .join(Product, OrderDetails.product_id == Product.id) \
-        .group_by(Order.id).order_by(Order.id)
-    results = execute_query(sess, orders_total, print_results=True)
+        all_details = (
+            select(Order, Product, OrderDetails.quantity)
+            .join(OrderDetails, Order.id == OrderDetails.order_id)
+            .join(Product, OrderDetails.product_id == Product.id)
+        )
+        execute_query(session, all_details, print_results=True)
 
-    print('First order total queried:', results[0][1])
+        orders_total = (
+            select(Order, func.sum(Product.price * OrderDetails.quantity))
+            .join(OrderDetails, Order.id == OrderDetails.order_id)
+            .join(Product, OrderDetails.product_id == Product.id)
+            .group_by(Order.id)
+            .order_by(Order.id)
+        )
+        results = execute_query(session, orders_total, print_results=True)
+        _, first_total = results[0]
+        print("First order total queried:", first_total)
 
-    first_order_query = select(Order).where(Order.id == 1)
-    result = execute_query(sess, first_order_query)
-    first_order = result[0][0]
+        # the same with relationships: lazy loading issues extra queries
+        first_order = session.scalars(select(Order).order_by(Order.id)).first()
+        assert first_order is not None
+        check_total = sum(d.product.price * d.quantity for d in first_order.details)
+        print("First order total checked:", check_total)
 
-    check_total = 0
-    for details in first_order.details:
-        check_total += details.product.price * details.quantity 
-    print('First order total checked:', check_total)
-
-    products = execute_query(sess, select(Product))
-    for p in products:
-        print(p[0].name, p[0].tags)
+        for product in session.scalars(select(Product)):
+            print(product.name, product.tags)
