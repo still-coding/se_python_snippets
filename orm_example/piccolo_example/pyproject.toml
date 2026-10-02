@@ -1,0 +1,9 @@
+[project]
+name = "piccolo-example"
+version = "0.1.0"
+description = "Piccolo ORM example: the same shop as in sqlalchemy_example"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "piccolo[postgres]>=1.36",
+]
