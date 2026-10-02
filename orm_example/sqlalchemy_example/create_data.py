@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from random import choice, randint, sample
 
 from tools import create_database
@@ -8,9 +9,10 @@ from config import DATABASE_URI
 from model import Customer, Order, OrderDetails, Product, Tag
 
 def read_csv(filename):
-        with open(f"./static_data/{filename}.csv", "r") as f:
-            result = [line.strip() for line in f]
-        return [r.split(";") for r in result]
+    path = Path(__file__).parent.parent / "static_data" / f"{filename}.csv"
+    with open(path, encoding="utf-8") as f:
+        result = [line.strip() for line in f if line.strip()]
+    return [r.split(";") for r in result]
 
 
 

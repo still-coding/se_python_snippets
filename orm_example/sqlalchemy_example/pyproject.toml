@@ -1,0 +1,10 @@
+[project]
+name = "sqlalchemy-example"
+version = "0.1.0"
+description = "SQLAlchemy ORM example: shop with customers, products, tags and orders"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
+]

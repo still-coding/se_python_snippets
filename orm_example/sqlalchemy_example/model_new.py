@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
-from sqlalchemy import ForeignKey, Identity
+from sqlalchemy import Column, ForeignKey, Identity, Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import Numeric, String
 
@@ -21,15 +21,34 @@ class Customer(Base):
     def __repr__(self):
         return f'Customer(id={self.id}, name={self.name})'
 
+products_tags = Table(
+    "products_tags",
+    Base.metadata,
+    Column("product_id", ForeignKey("product.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tag.id"), primary_key=True),
+)
+
+
 class Product(Base):
     __tablename__ = 'product'
     id: Mapped[int] = mapped_column(Identity(), primary_key=True)
     name: Mapped[str] = mapped_column()
     price: Mapped[Decimal] = mapped_column(Numeric(8, 2))
     details: Mapped[List['OrderDetails']] = relationship('OrderDetails', back_populates='product')
+    tags: Mapped[List['Tag']] = relationship('Tag', back_populates='products', secondary=products_tags)
 
     def __repr__(self):
         return f'Product(id={self.id}, name={self.name})'
+
+
+class Tag(Base):
+    __tablename__ = 'tag'
+    id: Mapped[int] = mapped_column(Identity(), primary_key=True)
+    name: Mapped[str] = mapped_column()
+    products: Mapped[List['Product']] = relationship('Product', back_populates='tags', secondary=products_tags)
+
+    def __repr__(self):
+        return f'Tag(id={self.id}, name={self.name})'
 
 class Order(Base):
     __tablename__ = 'order'
