@@ -34,6 +34,6 @@ uv run query.py
 | Style | sync (async is a separate setup) | async first, `.run_sync()` available |
 | Models | `Mapped[...]` + `relationship()` | columns only, joins by `Order.customer.name` |
 | Many-to-many | association `Table` + `relationship(secondary=...)` | joining table + `M2M(...)`, `add_m2m()` |
-| Composite primary key | yes (`OrderDetails`) | no, a surrogate `id` is used |
+| Composite primary key | yes (`OrderDetails`) | no: surrogate `id` + composite `Unique([order, product])` |
 | Arithmetic inside `Sum()` | yes | no, `raw()` is used for order totals |
 | Schema changes | Alembic | built-in migrations (not used here) |
