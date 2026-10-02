@@ -8,11 +8,11 @@ def main(page: ft.Page):
     page.title = "Heroes and Monsters"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.theme_mode = ft.ThemeMode.DARK
-    page.window_width = 1000
+    page.window.width = 1000
     
     lv_info = ft.ListView(expand=True, spacing=0, height=300, auto_scroll=True)
-    pb_hero = ft.ProgressBar(width=400, color=ft.colors.RED, value=0)
-    pb_monster = ft.ProgressBar(width=400, color=ft.colors.RED, value=0)
+    pb_hero = ft.ProgressBar(width=400, color=ft.Colors.RED, value=0)
+    pb_monster = ft.ProgressBar(width=400, color=ft.Colors.RED, value=0)
     txt_hero = ft.Text("hero", text_align=ft.TextAlign.CENTER, width=400)
     txt_monster = ft.Text("monster", text_align=ft.TextAlign.CENTER, width=400)
 
@@ -25,19 +25,19 @@ def main(page: ft.Page):
     def btn_create_monster_click(e):
         pass
 
-    def btn_start_click(e):
+    async def btn_start_click(e):
         pass
 
-    btn_start = ft.ElevatedButton(text="Start", width=450, on_click=btn_start_click)
-    dd_heroes = ft.Dropdown(on_change=dd_heroes_select)
+    btn_start = ft.Button(content="Start", width=450, on_click=btn_start_click)
+    dd_heroes = ft.Dropdown(on_select=dd_heroes_select)
 
     page.add(
         ft.Column(
             [
                 ft.Row(
                     [
-                        ft.ElevatedButton(
-                            text="New Game", width=450, on_click=btn_new_game_click
+                        ft.Button(
+                            content="New Game", width=450, on_click=btn_new_game_click
                         )
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -59,8 +59,8 @@ def main(page: ft.Page):
                             [
                                 ft.Row(
                                     [
-                                        ft.ElevatedButton(
-                                            text="Create Monster",
+                                        ft.Button(
+                                            content="Create Monster",
                                             on_click=btn_create_monster_click,
                                         )
                                     ],
@@ -87,4 +87,4 @@ def main(page: ft.Page):
     )
 
 
-ft.app(target=main)
+ft.run(main)
