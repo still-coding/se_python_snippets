@@ -32,11 +32,14 @@ async def fill_db():
     tags = [Tag(name=t[0]) for t in read_csv("tags")]
     await Tag.insert(*tags)
 
-    # objects of the same class are fetched back to get their ids
-    all_products = await Product.objects()
+    # joining table rows are inserted directly: add_m2m() can't be used because
+    # the foreign keys of ProductTag are NOT NULL
+    product_ids = [p.id for p in await Product.objects()]
+    product_tags = []
     for tag in await Tag.objects():
-        for product in sample(all_products, randint(1, 10)):
-            await tag.add_m2m(product, m2m=Tag.products)
+        for pid in sample(product_ids, randint(1, 10)):
+            product_tags.append(ProductTag(product=pid, tag=tag.id))
+    await ProductTag.insert(*product_tags)
 
     customer_ids = [c.id for c in await Customer.objects()]
     orders = [
@@ -49,7 +52,6 @@ async def fill_db():
     ]
     await Order.insert(*orders)
 
-    product_ids = [p.id for p in all_products]
     details = []
     for order in await Order.objects():
         for pid in sample(product_ids, randint(1, 20)):
